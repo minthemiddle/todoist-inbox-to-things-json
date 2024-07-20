@@ -13,3 +13,4 @@ Gets title and note.
 - Replace placeholder in `.env` with [your Todoist API key](https://todoist.com/de/help/articles/find-your-api-token-Jpzx9IIlB)
 - Run script `python3 todoist-to-things.py`
 - Append optional `--delete` to delete todos from Todoist's inbox after
+- Click output in terminal to import as tasks in Things3

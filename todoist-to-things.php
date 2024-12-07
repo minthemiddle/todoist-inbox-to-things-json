@@ -95,11 +95,9 @@ function generate_things_url($things_tasks) {
 }
 
 // Main function
-function main($delete = false) {
-    global $TODOIST_API_TOKEN;
-
+function main($client, $delete = false) {
     // Fetch projects from Todoist
-    $projects = fetch_todoist_projects($TODOIST_API_TOKEN);
+    $projects = fetch_todoist_projects($client);
 
     // Find the inbox project ID
     $inbox_project_id = null;
@@ -115,7 +113,7 @@ function main($delete = false) {
     }
 
     // Fetch tasks from the inbox project
-    $tasks = fetch_todoist_tasks($TODOIST_API_TOKEN, $inbox_project_id);
+    $tasks = fetch_todoist_tasks($client, $inbox_project_id);
 
     // Convert tasks to Things3 JSON format
     $things_tasks = convert_to_things_json($tasks);
@@ -129,7 +127,7 @@ function main($delete = false) {
     // Delete tasks from Todoist if the delete option is specified
     if ($delete) {
         foreach ($tasks as $task) {
-            delete_todoist_task($TODOIST_API_TOKEN, $task['id']);
+            delete_todoist_task($client, $task['id']);
         }
         echo 'Tasks deleted from Todoist.' . PHP_EOL;
     }
@@ -139,6 +137,6 @@ function main($delete = false) {
 $delete = isset($argv[1]) && $argv[1] === '--delete';
 
 // Run the main function
-main($delete);
+main($client, $delete);
 
 ?>

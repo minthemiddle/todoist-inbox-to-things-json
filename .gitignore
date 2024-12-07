@@ -1,2 +1,6 @@
 .env
 venv
+.aider*
+context
+vendor
+composer.lock

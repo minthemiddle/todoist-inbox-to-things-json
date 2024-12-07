@@ -1,7 +1,10 @@
 <?php
 
 // Require Composer's autoload file
- require 'vendor/autoload.php';
+require 'vendor/autoload.php';
+
+use GuzzleHttp\Client;
+use GuzzleHttp\Exception\RequestException;
 
 // Load environment variables from .env file
 $dotenv = Dotenv\Dotenv::createImmutable(__DIR__);
@@ -14,61 +17,43 @@ if (!$TODOIST_API_TOKEN) {
     throw new Exception("Todoist API token not found. Please set it in the .env file.");
 }
 
+// Initialize Guzzle client
+$client = new Client([
+    'base_uri' => 'https://api.todoist.com/rest/v2/',
+    'headers' => [
+        'Authorization' => 'Bearer ' . $TODOIST_API_TOKEN
+    ]
+]);
+
 // Function to fetch projects from Todoist
-function fetch_todoist_projects($TODOIST_API_TOKEN) {
-    $url = 'https://api.todoist.com/rest/v2/projects';
-    $headers = [
-        'Authorization: Bearer ' . $TODOIST_API_TOKEN
-    ];
-    $ch = curl_init();
-    curl_setopt($ch, CURLOPT_URL, $url);
-    curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
-    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-    $response = curl_exec($ch);
-    if (curl_errno($ch)) {
-        throw new Exception(curl_error($ch));
+function fetch_todoist_projects($client) {
+    try {
+        $response = $client->get('projects');
+        return json_decode($response->getBody(), true);
+    } catch (RequestException $e) {
+        throw new Exception("Failed to fetch projects: " . $e->getMessage());
     }
-    curl_close($ch);
-    return json_decode($response, true);
 }
 
 // Function to fetch tasks from Todoist
-function fetch_todoist_tasks($TODOIST_API_TOKEN, $project_id) {
-    $url = 'https://api.todoist.com/rest/v2/tasks';
-    $headers = [
-        'Authorization: Bearer ' . $TODOIST_API_TOKEN
-    ];
-    $params = [
-        'project_id' => $project_id
-    ];
-    $ch = curl_init();
-    curl_setopt($ch, CURLOPT_URL, $url . '?' . http_build_query($params));
-    curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
-    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-    $response = curl_exec($ch);
-    if (curl_errno($ch)) {
-        throw new Exception(curl_error($ch));
+function fetch_todoist_tasks($client, $project_id) {
+    try {
+        $response = $client->get('tasks', [
+            'query' => ['project_id' => $project_id]
+        ]);
+        return json_decode($response->getBody(), true);
+    } catch (RequestException $e) {
+        throw new Exception("Failed to fetch tasks: " . $e->getMessage());
     }
-    curl_close($ch);
-    return json_decode($response, true);
 }
 
 // Function to delete a task from Todoist
-function delete_todoist_task($TODOIST_API_TOKEN, $task_id) {
-    $url = 'https://api.todoist.com/rest/v2/tasks/' . $task_id;
-    $headers = [
-        'Authorization: Bearer ' . $TODOIST_API_TOKEN
-    ];
-    $ch = curl_init();
-    curl_setopt($ch, CURLOPT_URL, $url);
-    curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
-    curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'DELETE');
-    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-    $response = curl_exec($ch);
-    if (curl_errno($ch)) {
-        throw new Exception(curl_error($ch));
+function delete_todoist_task($client, $task_id) {
+    try {
+        $client->delete('tasks/' . $task_id);
+    } catch (RequestException $e) {
+        throw new Exception("Failed to delete task: " . $e->getMessage());
     }
-    curl_close($ch);
 }
 
 // Function to convert Todoist tasks to Things3 JSON format

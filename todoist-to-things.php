@@ -75,7 +75,7 @@ function convert_to_things_json($tasks) {
 // Function to generate Things3 import URL
 function generate_things_url($things_tasks) {
     $json_data = json_encode($things_tasks);
-    $encoded_data = urlencode($json_data);
+    $encoded_data = rawurlencode($json_data);
     return 'things:///json?data=' . $encoded_data;
 }
 

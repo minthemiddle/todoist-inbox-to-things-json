@@ -107,7 +107,8 @@ function main($client, $delete = false) {
     $things_url = generate_things_url($things_tasks);
 
     // Print the Things3 import URL
-    echo 'Click the link to import tasks into Things3: ' . $things_url . PHP_EOL;
+    echo 'Opening Things3 import URL in your default browser...' . PHP_EOL;
+    exec('open ' . escapeshellarg($things_url));
 
     // Delete tasks from Todoist if the delete option is specified
     if ($delete) {

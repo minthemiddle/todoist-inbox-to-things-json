@@ -4,3 +4,6 @@ venv
 context
 vendor
 composer.lock
+logs
+error.log
+output.log

@@ -8,7 +8,7 @@ Gets title and note.
 
 - [Activate URL Scheme](https://culturedcode.com/things/support/articles/2803573/) in Things3
 - Open terminal (such as *iTerm*)
-- Clone repo: `git clone git@github.com:minthemiddle/todoist-inbox-to-things-json.git`
+- Clone repo: `git clone https://github.com/minthemiddle/todoist-inbox-to-things-json.git`
 - Create and activate venv, e.g. `python -m venv venv`, `source venv/bin/activate`
 - Install libraries, `pip install -r requirements.txt`
 - Copy .env for your Todoist API key: `cp .env.example .env`
